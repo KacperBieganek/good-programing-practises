@@ -1,9 +1,7 @@
-from typing import Dict, Any, Type
+from typing import Dict, Type
 
 from flask import request, jsonify, Blueprint
 from flask_marshmallow import Marshmallow
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
 
 memory_endpoints = Blueprint('memory_endpoints', __name__)
 current_user_id = 0
