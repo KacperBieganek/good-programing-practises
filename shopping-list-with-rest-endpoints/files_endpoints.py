@@ -128,19 +128,22 @@ def user_detail(id):
 @files_endpoints.route("/user/<id>", methods=["PUT"])
 def user_update(id):
     user = None
+    user_row = []
 
     with user_lock:
-        with open(user_file, 'wr') as uf:
+        with open(user_file, 'r+', newline='') as uf:
             reader = csv.reader(uf)
             for row in reader:
                 if row[0] == id:
                     user = User(row[0], row[1], row[2], row[3], row[4], row[5])
+
             username = request.json['username']
             email = request.json['email']
             user.email = email
             user.username = username
+        with open(user_file, 'w', newline='') as uf:
             writer = csv.writer(uf)
-            for row in reader:
+            for row in user_row:
                 if row[0] == id:
                     members = [attr for attr in dir(user) if
                                not callable(getattr(user, attr)) and not attr.startswith("__")]
@@ -155,12 +158,15 @@ def user_update(id):
 @files_endpoints.route("/user/<id>", methods=["DELETE"])
 def user_delete(id):
     user = None
+    user_row = []
 
     with user_lock:
-        with open(user_file, 'wr') as uf:
+        with open(user_file, 'r+', newline='') as uf:
             reader = csv.reader(uf)
+            user_row.extend(reader)
+        with open(user_file, 'w', newline='') as uf:
             writer = csv.writer(uf)
-            for row in reader:
+            for row in user_row:
                 if row[0] == id:
                     user = User(row[0], row[1], row[2], row[3], row[4], row[5])
                 else:
@@ -225,9 +231,12 @@ def order_detail(id):
 @files_endpoints.route("/order/<id>", methods=["PUT"])
 def order_update(id):
     order = None
+    order_rows = []
+
     with order_lock:
-        with open(order_file, 'wr') as uf:
+        with open(order_file, 'r+', newline='') as uf:
             reader = csv.reader(uf)
+            order_rows.extend(reader)
             for row in reader:
                 if row[0] == id:
                     order = order(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
@@ -244,8 +253,10 @@ def order_update(id):
             order.item = item
             order.amount = amount
             order.customerid = customerid
+
+        with open(order_file, 'w', newline='') as uf:
             writer = csv.writer(uf)
-            for row in reader:
+            for row in order_rows:
                 if row[0] == id:
                     members = [attr for attr in dir(order) if
                                not callable(getattr(order, attr)) and not attr.startswith("__")]
@@ -260,12 +271,15 @@ def order_update(id):
 @files_endpoints.route("/order/<id>", methods=["DELETE"])
 def order_delete(id):
     order = None
+    order_rows = []
 
     with order_lock:
-        with open(order_file, 'wr') as uf:
+        with open(order_file, 'r+', newline='') as uf:
             reader = csv.reader(uf)
+            order_rows.extend(reader)
+        with open(order_file, 'w', newline='') as uf:
             writer = csv.writer(uf)
-            for row in reader:
+            for row in order_rows:
                 if row[0] == id:
                     order = Order(row[0], row[1], row[2], row[3], row[4], row[5])
                 else:
@@ -326,9 +340,11 @@ def storage_detail(id):
 @files_endpoints.route("/storage/<id>", methods=["PUT"])
 def storage_update(id):
     storage = None
+    storage_rows = []
     with storage_lock:
-        with open(storage_file, 'wr') as uf:
+        with open(storage_file, 'r+', newline='') as uf:
             reader = csv.reader(uf)
+            storage_rows.extend(reader)
             for row in reader:
                 if row[0] == id:
                     storage = Storage(row[0], row[1], row[2])
@@ -337,8 +353,9 @@ def storage_update(id):
 
             storage.item = item
             storage.amount = amount
+        with open(storage_file, 'w', newline='') as uf:
             writer = csv.writer(uf)
-            for row in reader:
+            for row in storage_rows:
                 if row[0] == id:
                     members = [attr for attr in dir(storage) if
                                not callable(getattr(storage, attr)) and not attr.startswith("__")]
@@ -354,11 +371,16 @@ def storage_update(id):
 def storage_delete(id):
     storage = None
 
+    storage_rows = []
+
     with storage_lock:
-        with open(storage_file, 'wr') as uf:
+        with open(storage_file, 'rb') as uf:
             reader = csv.reader(uf)
+            storage_rows.extend(reader)
+
+        with open(storage_file, 'wb') as uf:
             writer = csv.writer(uf)
-            for row in reader:
+            for row in storage_rows:
                 if row[0] == id:
                     storage = Storage(row[0], row[1], row[2])
                 else:
