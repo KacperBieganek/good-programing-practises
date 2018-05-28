@@ -9,4 +9,4 @@ class Circle(Shape):
         self.radius = radius
 
     def circuit(self):
-        return self.radius * 2 * self.pi
+        print(str(self.radius * 2 * self.pi))

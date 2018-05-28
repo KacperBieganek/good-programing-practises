@@ -7,4 +7,4 @@ class Square(Shape):
         self.side = side
 
     def circuit(self):
-        return self.side * self.side
+        print(str(self.side * self.side))

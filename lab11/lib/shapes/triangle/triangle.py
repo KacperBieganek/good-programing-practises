@@ -9,4 +9,4 @@ class Triangle(Shape):
         self.side3 = side3
 
     def circuit(self):
-        return self.side1 + self.side2 + self.side3
+        print(str(self.side1 + self.side2 + self.side3))
